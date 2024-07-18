@@ -212,6 +212,27 @@ require('lazy').setup({
       }
     end,
   },
+  {
+
+    'P4Cu/ctrlsf-ui.nvim',
+    dependencies = {
+      'MunifTanjim/nui.nvim',
+      {
+        'dyng/ctrlsf.vim',
+        cmd = {
+          'CtrlSF',
+          'CtrlSFClearHL',
+          'CtrlSFClose',
+          'CtrlSFFocus',
+          'CtrlSFOpen',
+          'CtrlSFQuickfix',
+          'CtrlSFStop',
+          'CtrlSFToggle',
+          'CtrlSFUpdate',
+        },
+      },
+    },
+  },
 
   -- NOTE: Plugins can specify dependencies.
   --
@@ -224,7 +245,7 @@ require('lazy').setup({
     'nvim-telescope/telescope.nvim',
     event = 'VimEnter',
     branch = '0.1.x',
-    dependencies = {
+    {
       'nvim-lua/plenary.nvim',
       { -- If encountering errors, see telescope-fzf-native README for installation instructions
         'nvim-telescope/telescope-fzf-native.nvim',
@@ -294,7 +315,7 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>sf', builtin.find_files, { desc = '[S]earch [F]iles' })
       vim.keymap.set('n', '<leader>ss', builtin.builtin, { desc = '[S]earch [S]elect Telescope' })
       vim.keymap.set('n', '<leader>sw', builtin.grep_string, { desc = '[S]earch current [W]ord' })
-      vim.keymap.set('n', '<leader>sg', builtin.live_grep, { desc = '[S]earch by [G]rep' })
+      vim.keymap.set('n', '<leader>sg', builtin.live_grep, { desc = '[S]earch by [G]rp' })
       vim.keymap.set('n', '<leader>sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
       vim.keymap.set('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
       vim.keymap.set('n', '<leader>s.', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
@@ -955,7 +976,11 @@ cmp.setup {
 vim.keymap.set('n', '<leader>re', '<Plug>(Prettier)', opts)
 vim.keymap.set('v', '<leader>re', ':PrettierFragment<cr>', opts)
 
+-- CtrlSF
+vim.keymap.set('n', '<C-f>f', '<Plug>CtrlSFPrompt')
+
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
 --
 require 'autopairs-config'
+require 'ctrlsf-ui'
