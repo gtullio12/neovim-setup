@@ -159,6 +159,7 @@ require('lazy').setup({
 
   -- "gc" to comment visual regions/lines
   { 'numToStr/Comment.nvim', opts = {} },
+  { 'windwp/nvim-autopairs' },
 
   -- Here is a more advanced example where we pass configuration
   -- options to `gitsigns.nvim`. This is equivalent to the following Lua:
@@ -956,3 +957,5 @@ vim.keymap.set('v', '<leader>re', ':PrettierFragment<cr>', opts)
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
+--
+require 'autopairs-config'
