@@ -1,4 +1,4 @@
----- Set <space> as the leader key
+--- Set <space> as the leader key
 -- See `:help mapleader`
 --  NOTE: Must happen before plugins are loaded (otherwise wrong leader will be used)
 local map = vim.api.nvim_set_keymap
@@ -162,12 +162,24 @@ require('lazy').setup({
 
   -- "gc" to comment visual regions/lines
   { 'numToStr/Comment.nvim', opts = {} },
-  { 'windwp/nvim-autopairs' },
   {
-    'vhyrro/luarocks.nvim',
-    priority = 1000, -- Very high priority is required, luarocks.nvim should run as the first plugin in your config.
-    config = true,
+    'ray-x/go.nvim',
+    dependencies = { -- optional packages
+      'ray-x/guihua.lua',
+      'neovim/nvim-lspconfig',
+      'nvim-treesitter/nvim-treesitter',
+    },
+    config = function()
+      require('go').setup()
+    end,
+    event = { 'CmdlineEnter' },
+    ft = { 'go', 'gomod' },
+    build = ':lua require("go.install").update_all_sync()', -- if you need to install/update all binaries
   },
+  { 'windwp/nvim-autopairs' },
+  { 'fatih/vim-go' },
+  { 'preservim/nerdtree' },
+  { 'charlespascoe/vim-go-syntax' },
 
   -- Here is a more advanced example where we pass configuration
   -- options to `gitsigns.nvim`. This is equivalent to the following Lua:
@@ -886,7 +898,14 @@ local on_attach = function(client, bufnr)
 end
 
 -- The nvim-cmp almost supports LSP's capabilities so You should advertise it to LSP servers..
-local capabilities = require('cmp_nvim_lsp').default_capabilities()
+local capabilities = require('cmp_nvim_lsp').default_capabilities(vim.lsp.protocol.make_client_capabilities())
+require('go').setup {
+  -- other setups ....
+  lsp_cfg = {
+    capabilities = capabilities,
+    -- other setups
+  },
+}
 
 -- Capabilities required for the visualstudio lsps (css, html, etc)
 capabilities.textDocument.completion.completionItem.snippetSupport = true
@@ -984,6 +1003,9 @@ cmp.setup {
 vim.keymap.set('n', '<leader>re', '<Plug>(Prettier)', opts)
 vim.keymap.set('v', '<leader>re', ':PrettierFragment<cr>', opts)
 
+-- Nerdtree
+vim.keymap.set('n', '<C-n>', ':NERDTree<CR>')
+
 -- CtrlSF
 vim.keymap.set('n', '<C-f>f', '<Plug>CtrlSFPrompt')
 
@@ -992,4 +1014,16 @@ vim.keymap.set('n', '<C-f>f', '<Plug>CtrlSFPrompt')
 --
 require 'autopairs-config'
 require 'ctrlsf-ui'
-require('luarocks-nvim').setup()
+require('go').setup()
+require('go.format').gofmt() -- gofmt only
+require('go.format').goimports() -- goimports + gofmt
+-- Run gofmt + goimports on save
+
+local format_sync_grp = vim.api.nvim_create_augroup('goimports', {})
+vim.api.nvim_create_autocmd('BufWritePre', {
+  pattern = '*.go',
+  callback = function()
+    require('go.format').goimports()
+  end,
+  group = format_sync_grp,
+})
