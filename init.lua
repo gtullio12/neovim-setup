@@ -163,6 +163,29 @@ require('lazy').setup({
   -- "gc" to comment visual regions/lines
   { 'numToStr/Comment.nvim', opts = {} },
   {
+    'nvim-java/nvim-java',
+    config = false,
+    dependencies = {
+      {
+        'neovim/nvim-lspconfig',
+        opts = {
+          servers = {
+            jdtls = {
+              -- your jdtls configuration goes here
+            },
+          },
+          setup = {
+            jdtls = function()
+              require('java').setup {
+                -- your nvim-java configuration goes here
+              }
+            end,
+          },
+        },
+      },
+    },
+  },
+  {
     'ray-x/go.nvim',
     dependencies = { -- optional packages
       'ray-x/guihua.lua',
@@ -912,7 +935,9 @@ capabilities.textDocument.completion.completionItem.snippetSupport = true
 
 -- Activate LSPs
 -- All LSPs in this list need to be manually installed via NPM/PNPM/whatevs
+require('java').setup()
 local lspconfig = require 'lspconfig'
+--lspconfig.jdtls.setup {}
 local servers = { 'tailwindcss', 'tsserver', 'jsonls', 'eslint' }
 for _, lsp in pairs(servers) do
   lspconfig[lsp].setup {
@@ -1014,6 +1039,7 @@ vim.keymap.set('n', '<C-f>f', '<Plug>CtrlSFPrompt')
 --
 require 'autopairs-config'
 require 'ctrlsf-ui'
+require('lspconfig').jdtls.setup {}
 require('go').setup()
 require('go.format').gofmt() -- gofmt only
 require('go.format').goimports() -- goimports + gofmt
